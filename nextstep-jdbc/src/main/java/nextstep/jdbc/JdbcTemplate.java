@@ -1,5 +1,11 @@
 package nextstep.jdbc;
 
+import nextstep.jdbc.connection.ConnectionManager;
+import nextstep.jdbc.connection.DBConnection;
+import nextstep.jdbc.exception.DataAccessException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -9,29 +15,50 @@ import java.util.List;
 import java.util.Optional;
 
 public class JdbcTemplate {
-    public void execute(Connection con, String sql, Object... objects) throws SQLException {
-        try (PreparedStatement pstmt = con.prepareStatement(sql)) {
+    private static final Logger log = LoggerFactory.getLogger(JdbcTemplate.class);
+
+    private ConnectionManager connectionManager;
+
+    public JdbcTemplate() {
+        connectionManager = new ConnectionManager(DBConnection.getInstance());
+    }
+
+    public void execute(String sql, Object... objects) {
+        try (Connection con = connectionManager.getConnection(); PreparedStatement pstmt = con.prepareStatement(sql)) {
             setValues(pstmt, objects);
             pstmt.executeUpdate();
+        } catch (SQLException e) {
+            log.error("executeUpdate Exception!");
+            throw new DataAccessException(e);
         }
     }
 
-    public <T> List<T> query(Connection con, String sql, RowMapper<T> rm) throws SQLException {
-        try (PreparedStatement pstmt = con.prepareStatement(sql); ResultSet rs = pstmt.executeQuery()) {
+    public <T> List<T> query(String sql, RowMapper<T> rm) {
+        try (Connection con = connectionManager.getConnection(); PreparedStatement pstmt = con.prepareStatement(sql);
+             ResultSet rs = pstmt.executeQuery()) {
+
             List<T> values = new ArrayList<>();
             while (rs.next()) {
                 values.add(rm.mapRow(rs));
             }
             return values;
+        } catch (SQLException e) {
+            log.error("executeQuery Exception!");
+            throw new DataAccessException(e);
         }
     }
 
-    public <T> Optional<T> queryForObject(Connection con, String sql, RowMapper<T> rm, Object... objects) throws SQLException {
-        try (PreparedStatement pstmt = con.prepareStatement(sql); ResultSet rs = executeValueSetQuery(pstmt, objects)) {
+    public <T> Optional<T> queryForObject(String sql, RowMapper<T> rm, Object... objects) {
+        try (Connection con = connectionManager.getConnection(); PreparedStatement pstmt = con.prepareStatement(sql);
+             ResultSet rs = executeValueSetQuery(pstmt, objects)) {
+
             if (rs.next()) {
                 return Optional.ofNullable(rm.mapRow(rs));
             }
             return Optional.empty();
+        } catch (SQLException e) {
+            log.error("queryForObject Exception!");
+            throw new DataAccessException(e);
         }
     }
 

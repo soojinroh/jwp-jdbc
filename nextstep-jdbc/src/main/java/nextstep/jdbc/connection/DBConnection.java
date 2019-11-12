@@ -1,4 +1,4 @@
-package nextstep.jdbc;
+package nextstep.jdbc.connection;
 
 public class DBConnection {
     private String driver;

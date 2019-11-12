@@ -1,7 +1,6 @@
 package slipp.controller;
 
 import slipp.dao.UserDao;
-import slipp.dao.UserDaoImpl;
 import slipp.domain.User;
 import slipp.dto.UserUpdatedDto;
 import nextstep.mvc.asis.Controller;

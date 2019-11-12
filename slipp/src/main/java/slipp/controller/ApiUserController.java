@@ -10,7 +10,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import slipp.dao.UserDao;
-import slipp.dao.UserDaoImpl;
 import slipp.domain.User;
 import slipp.dto.UserCreatedDto;
 import slipp.dto.UserUpdatedDto;
@@ -27,7 +26,7 @@ public class ApiUserController {
 
     public ApiUserController() {
         this.objectMapper = new ObjectMapper();
-        this.userDao = new UserDaoImpl();
+        this.userDao = new UserDao();
     }
 
     @RequestMapping(value = "/api/users", method = RequestMethod.POST)
