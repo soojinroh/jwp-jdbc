@@ -2,6 +2,7 @@ package slipp.dao;
 
 import nextstep.jdbc.JdbcTemplate;
 import nextstep.jdbc.RowMapper;
+import nextstep.jdbc.connection.DBConnection;
 import nextstep.jdbc.exception.NotFoundObjectException;
 import slipp.domain.User;
 
@@ -11,7 +12,8 @@ public class UserDao {
     private JdbcTemplate jdbcTemplate;
 
     public UserDao() {
-        jdbcTemplate = new JdbcTemplate();
+        DBConnection dbConnection = DBConnection.getH2Connection("org.h2.Driver", "jdbc:h2:mem:jwp-framework", "sa", "");
+        jdbcTemplate = new JdbcTemplate(dbConnection);
     }
 
     public void insert(User user) {
