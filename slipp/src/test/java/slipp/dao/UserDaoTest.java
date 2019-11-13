@@ -20,7 +20,7 @@ public class UserDaoTest {
     public void setup() {
         ResourceDatabasePopulator populator = new ResourceDatabasePopulator();
         populator.addScript(new ClassPathResource("jwp.sql"));
-        DatabasePopulatorUtils.execute(populator, ConnectionManager.getDataSource());
+        DatabasePopulatorUtils.execute(populator, ConnectionManager.getH2DataSource());
         userDao = new UserDao();
     }
 
