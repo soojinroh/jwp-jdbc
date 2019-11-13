@@ -1,6 +1,14 @@
 package nextstep.jdbc.connection;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Properties;
+
 public class DBConnection {
+    private static final Logger log = LoggerFactory.getLogger(DBConnection.class);
     private String driver;
     private String url;
     private String userName;
@@ -13,8 +21,33 @@ public class DBConnection {
         this.password = password;
     }
 
-    public static DBConnection getInstance() {
-        return new DBConnection("org.h2.Driver", "jdbc:h2:mem:jwp-framework", "sa", "");
+    public DBConnection() {
+        Properties properties = readDbProperties();
+
+        driver = properties.getProperty("jdbc.driverClass");
+        url = properties.getProperty("jdbc.url");
+        userName = properties.getProperty("jdbc.username");
+        password = properties.getProperty("jdbc.password");
+    }
+
+    private Properties readDbProperties() {
+        InputStream in = getClass().getClassLoader().getResourceAsStream("db.properties");
+        Properties properties = new Properties();
+        try {
+            properties.load(in);
+        } catch (IOException e) {
+            log.debug(e.getMessage());
+            throw new PropertiesLoadException(e);
+        }
+        return properties;
+    }
+
+    public static DBConnection getMySQLConnection() {
+        return new DBConnection();
+    }
+
+    public static DBConnection getH2Connection(String driver, String url, String userName, String password) {
+        return new DBConnection(driver, url, userName, password);
     }
 
     public String getDriver() {
