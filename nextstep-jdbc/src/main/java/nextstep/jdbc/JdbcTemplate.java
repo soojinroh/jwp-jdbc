@@ -19,8 +19,8 @@ public class JdbcTemplate {
 
     private ConnectionManager connectionManager;
 
-    public JdbcTemplate() {
-        connectionManager = new ConnectionManager(DBConnection.getInstance());
+    public JdbcTemplate(DBConnection dbConnection) {
+        connectionManager = new ConnectionManager(dbConnection);
     }
 
     public void execute(String sql, Object... objects) {
