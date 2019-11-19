@@ -98,7 +98,6 @@ public class SQLIndexStudyTest {
 
         assertThat(codingYearDtos.get(0).toString()).isEqualTo("Back-end developer : 6.2");
         assertThat(codingYearDtos.get(2).toString()).isEqualTo("Data or business analyst : 7.2");
-        log.debug(codingYearDtos.toString());
     }
 
     private List<CodingYearDto> executeQuery(String typeSql, String indexSql, String selectSql) {
